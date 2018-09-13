@@ -34,6 +34,18 @@ body {
   text-align: center;
 }
 
+.github-link{
+  font-size: 1.75rem;
+  font-style: italic;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 300;
+  text-decoration: none;
+  color: white;
+}
+.github-link:hover{
+  text-decoration: underline;
+}
+
 
 /*Gameplay view*/
 #timer-display {
