@@ -1,9 +1,13 @@
 //local storage
 let store = {user: [], game: []}
 
-//API endpoints
+//LOCALHOST API endpoints
 const userUrl = "http://localhost:3000/api/v1/users"
 const gameUrl = "http://localhost:3000/api/v1/games"
+
+//LIVE API endpoints
+// const userUrl = "http://localhost:3000/api/v1/users"
+// const gameUrl = "http://localhost:3000/api/v1/games"
 
 //manages current score during game
 let activeScore = 0;
@@ -110,7 +114,7 @@ function gameSetup(){
   answerForm.append(answerSubmitButton);
   answerContainer.append(answerForm);
 
-  //add live scoreboard 
+  //add live scoreboard
   let correctAnswerCounterDisplay = document.createElement("h2")
   correctAnswerCounterContainer.append(correctAnswerCounterDisplay)
 
