@@ -62,10 +62,13 @@ function saveGamesLocally(games){
 }
 
 function gameSetup(){
+  //save playerName from login field and findOrCreate an instance of it
   let playerName = loginField.value;
   let user = findOrCreateUser(playerName);
+  //create an active game
   gameActive = true;
 
+  //hide the neccessary HTML
   landingContainer.style.display = 'block';
   landingContainer.style.display = 'none';
 
@@ -82,7 +85,7 @@ function gameSetup(){
   countdown(timerDisplay, playerName, user);
   timerContainer.append(timerDisplay);
 
-  //hearts
+  //set up hearts
   let hearts = document.createElement("h1");
   hearts.style.textAlign = "center";
   hearts.style.color = "white";
@@ -107,6 +110,7 @@ function gameSetup(){
   answerForm.append(answerSubmitButton);
   answerContainer.append(answerForm);
 
+  //add live scoreboard 
   let correctAnswerCounterDisplay = document.createElement("h2")
   correctAnswerCounterContainer.append(correctAnswerCounterDisplay)
 
@@ -174,26 +178,36 @@ function countdown(timer, playerName, user){
   }, 1000)
 }
 
+//handleQuestionsAndAnswers prompts user with question (and check answers). Also manages hearts remaining
 function handleQuestionsAndAnswers(question, hearts, heartsCounter, answerForm, correctAnswerCounterDisplay, timerDisplay, playerName, user){
   let currentQuestion = mathQuiz();
   let userAnswer; //declaring now. Will assign value later.
+
   question.innerText = currentQuestion;
   answerForm.addEventListener("click", function moreQuestions(e){
     e.preventDefault();
     if (e.target.id === "submit-answer-button"){
+      //grab submitted answer
       let userAnswer = parseInt(e.target.parentElement.getElementsByTagName("INPUT")[0].value)
 
+      //check if answer is correct
       if (userAnswer == answer){
+        //if true increment score, empty input field, update score
         activeScore++;
         document.getElementById("answer-input").value = '';
         correctAnswerCounterDisplay.innerText = `Number of correct answers: ${activeScore}`
+        //remove eventListener after use to prevent memory leak
         answerForm.removeEventListener("click", moreQuestions)
+        //rerun function to provide user a new question
         handleQuestionsAndAnswers(question, hearts, heartsCounter, answerForm, correctAnswerCounterDisplay, timerDisplay, playerName, user)
       }
+      //if answer is incorrect:
       else {
+        //remove a heart and clear input field
         heartsCounter--;
         hearts.children[heartsCounter].style.display = 'none';
         document.getElementById("answer-input").value=""
+        //end game if user has no hearts remaining and trigger gameOver code
         if (heartsCounter == 0){
           document.getElementById("timer-display").innerText = `No more lives!`
           answerForm.removeEventListener("click", moreQuestions)
@@ -249,7 +263,6 @@ function postGameOptions(){
 
 //this method will display the scoreboard
 function displayScoreboard(){
-
   //hide the other things on page and add neccessary items to the DOM
   landingContainer.style.display = 'block';
   landingContainer.style.display = 'none';
@@ -292,7 +305,6 @@ function displayScoreboard(){
     //send back to home if they click home button
     location.reload();
   })
-
 }
 
 
@@ -301,14 +313,12 @@ function findUser(playerName){
     return playerName === individualUser.name
   })
 }
-
 function createUser(playerName){
   let newUser = new User ({"name": playerName})
   store["user"].push(newUser);
   newUser.addUserBackend();
   return newUser;
 }
-
 //checks to see if user exists. If not create one.
 function findOrCreateUser(playerName){
   if (findUser(playerName)){
