@@ -1,22 +1,24 @@
 //local storage
 let store = {user: [], game: []}
 
-//URLs
+//API endpoints
 const userUrl = "http://localhost:3000/api/v1/users"
 const gameUrl = "http://localhost:3000/api/v1/games"
 
 //manages current score during game
 let activeScore = 0;
 
-//checks if game a game is in progress
+//manages if a game is currently in progress
 let gameActive = false;
 
 //fetch data and pass to local saves
 //GET REQUEST
 fetch(userUrl)
-.then(response=>response.json())
-.then(data=>saveUsersLocally(data))
+  .then(response=>response.json())
+  //save response to local storage
+  .then(data=>saveUsersLocally(data))
 
+//DOM elements
 const contentContainer = document.getElementById("content-container");
 
 const landingContainer = document.getElementById("landing-container");
@@ -32,13 +34,8 @@ const postGameContainer = document.getElementById("post-game-option-container");
 const loginField = document.getElementById("login-field")
 const loginSubmit = document.getElementById("login-submit-button")
 const homeScoreboardButton = document.getElementById("home-scoreboard-button");
-const correctAnswerSound = document.getElementById("correct");
-const wrongAnswerSound = document.getElementById("wrong");
-const gameOverSound = document.getElementById("gameOver");
-const winnerSound = document.getElementById("winner");
-loginField.focus();
-loginField.select();
 
+//Home view options. Game will begin on submitting form. OR:
 loginSubmit.addEventListener("click", gameSetup)
 loginField.addEventListener("keypress", function(e){
   if (e.which === 13){
@@ -46,9 +43,10 @@ loginField.addEventListener("keypress", function(e){
     loginSubmit.click();
   }
 })
+//Or visit the scoreboard by clicking the appropriate button
 homeScoreboardButton.addEventListener("click", displayScoreboard)
 
-
+//saveUsersLocally and saveGamesLocally puts new data in the local store
 function saveUsersLocally(data){
   data.forEach(function(individualUser){
     let currentUser = new User(individualUser)
@@ -108,8 +106,6 @@ function gameSetup(){
   answerForm.append(answerInputField);
   answerForm.append(answerSubmitButton);
   answerContainer.append(answerForm);
-  answerInputField.focus();
-  answerInputField.select();
 
   let correctAnswerCounterDisplay = document.createElement("h2")
   correctAnswerCounterContainer.append(correctAnswerCounterDisplay)
@@ -121,43 +117,49 @@ function gameSetup(){
   questionContainer.append(question);
   handleQuestionsAndAnswers(question, hearts, heartsCounter, answerForm, correctAnswerCounterDisplay, timerDisplay, playerName, user)
 }
+
+//generates a math question
 function mathQuiz() {
   //determintes question type (+, -, *, /)
   questionType = Math.floor((Math.random() * 4) + 1)
   //addition
   if (questionType === 1){
-    number1 = Math.floor((Math.random() * 30) + 1)
-    number2 = Math.floor((Math.random() * 30) + 1)
+    number1 = Math.floor((Math.random() * 100) + 1)
+    number2 = Math.floor((Math.random() * 100) + 1)
     answer = number1 + number2
     return (`${number1} + ${number2}`);
   }
   //subtraction
   else if (questionType === 2) {
-    number1 = Math.floor((Math.random() * 50) + 1)
-    number2 = Math.floor((Math.random() * 10) + 1)
+    number1 = Math.floor((Math.random() * 100) + 1)
+    number2 = Math.floor((Math.random() * 100) + 1)
     answer = number1 - number2
     return(`${number1} - ${number2}`);
   }
   //multiplication
   else if (questionType === 3) {
     number1 = Math.floor((Math.random() * 15) + 1)
-    number2 = Math.floor((Math.random() * 5) + 1)
+    number2 = Math.floor((Math.random() * 15) + 1)
     answer = number1 * number2
     return(`${number1} * ${number2}`);
   }
-  //division
+  //modulo (because division gets messy with remainders)
   else if (questionType === 4) {
-    number1 = Math.floor((Math.random() * 40) + 1)
-    number2 = Math.floor((Math.random() * 10) + 1)
+    number1 = Math.floor((Math.random() * 20) + 1)
+    number2 = Math.floor((Math.random() * 20) + 1)
     // number1 = number1*number2
     answer = number1 % number2
     return (`${number1} % ${number2}`);
   }
 }
+
+//Manages game clock
 function countdown(timer, playerName, user){
+  //adjust game time here:
   let timeRemaining = 30;
   let gameCountdown = setInterval(function(){
     timeRemaining--;
+    //checks if time was exhausted or if gameActive is no longer true for other reasons
     if (timeRemaining != 0 && gameActive == true) {
       timer.innerText = timeRemaining
     }
@@ -171,20 +173,17 @@ function countdown(timer, playerName, user){
     }
   }, 1000)
 }
-function handleQuestionsAndAnswers(question, hearts, heartsCounter, answerForm, correctAnswerCounterDisplay, timerDisplay, playerName, user){
 
+function handleQuestionsAndAnswers(question, hearts, heartsCounter, answerForm, correctAnswerCounterDisplay, timerDisplay, playerName, user){
   let currentQuestion = mathQuiz();
   let userAnswer; //declaring now. Will assign value later.
   question.innerText = currentQuestion;
   answerForm.addEventListener("click", function moreQuestions(e){
     e.preventDefault();
-    wrongAnswerSound.pause()
-    correctAnswerSound.pause()
     if (e.target.id === "submit-answer-button"){
       let userAnswer = parseInt(e.target.parentElement.getElementsByTagName("INPUT")[0].value)
 
       if (userAnswer == answer){
-        correctAnswerSound.play()
         activeScore++;
         document.getElementById("answer-input").value = '';
         correctAnswerCounterDisplay.innerText = `Number of correct answers: ${activeScore}`
@@ -192,11 +191,9 @@ function handleQuestionsAndAnswers(question, hearts, heartsCounter, answerForm, 
         handleQuestionsAndAnswers(question, hearts, heartsCounter, answerForm, correctAnswerCounterDisplay, timerDisplay, playerName, user)
       }
       else {
-        wrongAnswerSound.play()
         heartsCounter--;
         hearts.children[heartsCounter].style.display = 'none';
         document.getElementById("answer-input").value=""
-        question.innerText = mathQuiz()
         if (heartsCounter == 0){
           document.getElementById("timer-display").innerText = `No more lives!`
           answerForm.removeEventListener("click", moreQuestions)
@@ -206,20 +203,26 @@ function handleQuestionsAndAnswers(question, hearts, heartsCounter, answerForm, 
     }
   })
 }
+
+//This method disables gameplay so user cannot continue playing after game is over.
 function disableGameplay(){
   document.getElementById("answer-input").disabled = true;
   document.getElementById("answer-input").style.color = "gray";
   document.getElementById("submit-answer-button").disabled = true;
   document.getElementById("submit-answer-button").style.color = "gray";
 }
+
+//called when game needs to end. Changes gameActive to false (ending the game elsewhere), disables game functionality, posts game score to backend and initiates postGameOptions
 function gameOver(playerName, user){
-  gameOverSound.play();
   gameActive = false;
   disableGameplay();
   let newGame = user.createGame(activeScore);
   postGameOptions()
 }
+
+//prompts user to continue using the app after game ends by restarting or visiting the scoreboard.
 function postGameOptions(){
+  //adding options to DOM here
   let replayButton = document.createElement("button");
   let scoreboardButton = document.createElement("button");
   replayButton.innerText = "Replay"
@@ -234,16 +237,20 @@ function postGameOptions(){
   postGameContainer.addEventListener("click", function(e){
     e.preventDefault();
     if (e.target.id === "post-game-replay-button"){
+      //brings user back to homepage if they wish to play again
       location.reload();
     }
-    else if (e.target.id === "post-game-scoreboard-button"){
+    if (e.target.id === "post-game-scoreboard-button"){
+      //or brings user to scoreboard
       displayScoreboard()
     }
-})
+  })
 }
 
+//this method will display the scoreboard
 function displayScoreboard(){
-  winnerSound.play()
+
+  //hide the other things on page and add neccessary items to the DOM
   landingContainer.style.display = 'block';
   landingContainer.style.display = 'none';
 
@@ -252,7 +259,7 @@ function displayScoreboard(){
   leaderboardContainer.id = "leaderboard-container"
   let leaderboardHeadline = document.createElement("h1");
   leaderboardHeadline.id = "leaderboard-headline"
-  leaderboardHeadline.innerText = "Leaderboard (Top 10)"
+  leaderboardHeadline.innerText = "Leaderboard"
   contentContainer.append(leaderboardContainer);
   leaderboardContainer.append(leaderboardHeadline);
 
@@ -263,20 +270,18 @@ function displayScoreboard(){
   let leaderboardOl = document.createElement("ol");
   leaderboardListContainer.append(leaderboardOl);
 
+  //sort scores to display highest first
   let sortedScores = store["game"].slice().sort( (a,b) => b.score - a.score )
 
-  sortedScores.slice(0,10).forEach(function(individualGame){
+  //iterate over sorted scores and post to DOM
+  sortedScores.forEach(function(individualGame){
       let leaderboardItem = document.createElement("li");
       let leaderboardUser = User.findUserById(individualGame.userId)
       leaderboardItem.append(`${individualGame.score} points - ${leaderboardUser.name}`)
       leaderboardOl.append(leaderboardItem);
   })
-leaderboardOl.firstChild.innerHTML += `<img src="images/best.png" height="52" width="112">`
-setInterval(function() {
-  // debugger;
-  let winner=leaderboardOl.firstChild.getElementsByTagName("img")[0]
-        winner.style.display = (winner.style.display == 'none' ? '' : 'none');
-    }, 1000);
+
+  //Create homepage button user can return home
   let homepageButton = document.createElement("button");
   homepageButton.id = "homepage-button"
   homepageButton.className = "more-buttons button-login"
@@ -284,23 +289,27 @@ setInterval(function() {
   leaderboardListContainer.append(homepageButton)
 
   homepageButton.addEventListener("click", function(){
-    winnerSound.pause()
+    //send back to home if they click home button
     location.reload();
   })
 
 }
+
 
 function findUser(playerName){
   return store["user"].find( (individualUser) => {
     return playerName === individualUser.name
   })
 }
+
 function createUser(playerName){
   let newUser = new User ({"name": playerName})
   store["user"].push(newUser);
   newUser.addUserBackend();
   return newUser;
 }
+
+//checks to see if user exists. If not create one.
 function findOrCreateUser(playerName){
   if (findUser(playerName)){
     return findUser(playerName)

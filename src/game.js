@@ -1,5 +1,6 @@
 let localGameId = 0;
 
+//Game object holds an id, score and user instance
 class Game {
   constructor(obj){
     this.localGameId = ++localGameId;
@@ -7,6 +8,7 @@ class Game {
     this.userId = obj.user_id;
   }
 
+  //POST score to DB here.
   addGameBackend(){
     let submissionBody = {
       "user_id": this.userId,

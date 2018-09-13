@@ -6,6 +6,7 @@ class User {
     this.name = obj.name;
   }
 
+  //POST new user to the server
   addUserBackend(){
     let submissionBody = {
       "name": this.name,
@@ -24,9 +25,11 @@ class User {
      addUser(userUrl,submissionBody);
   }
 
+  //create new instance of game. Associate a user instance with the new game
   createGame(score){
     let newGame = new Game({"user_id": this.localUserId, "score": score})
     store["game"].push(newGame);
+    //post this game with user instance to the backend
     newGame.addGameBackend();
     return newGame;
   }
