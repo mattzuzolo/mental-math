@@ -1,18 +1,18 @@
 # Mental Math
 
-Practice your mental math skills against the clock.
+Practice your mental math skills against the clock. You have 30 seconds and three chances to answer as many mental math questions as you can!
 
-[See the live demo here](https://mattzuzolo.github.io/mental-math/)
+[Click here to play the live demo](https://mattzuzolo.github.io/mental-math/)
 
 ## Technology
 
-* This project was created with JavaScript (ES6)
+This project was created with JavaScript(ES6). User and game data is saved to a Rails API.
 
 ### Getting started
 
-Open the index.js file in your browser to start playing! Visit the back-end repository below to save your scores to a database!
+Open the index.js file in your browser to start playing! Use the back-end repository below to save your scores to a database!
 
-Mental Math's rails-based RESTful API is available to view here: (https://github.com/mattzuzolo/mental-math-back)
+Mental Math's Rails-based RESTful API is available to view here: (https://github.com/mattzuzolo/mental-math-back)
 
 ## Authors
 
