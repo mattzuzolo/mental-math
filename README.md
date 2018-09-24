@@ -6,7 +6,7 @@ Practice your mental math skills against the clock.
 
 ## Technology
 
-* This project was created with Javascript (ES6)
+* This project was created with JavaScript (ES6)
 
 ### Getting started
 
