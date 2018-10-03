@@ -6,8 +6,8 @@ let store = {user: [], game: []}
 // const gameUrl = "http://localhost:3000/api/v1/games"
 
 //LIVE API endpoints
-const userUrl = "https://mental-math-with-matt-n-steve.herokuapp.com/api/v1/users"
-const gameUrl = "https://mental-math-with-matt-n-steve.herokuapp.com/api/v1/games"
+const userUrl = "https://morning-tundra-15513.herokuapp.com/api/v1/users"
+const gameUrl = "https://morning-tundra-15513.herokuapp.com/api/v1/games"
 
 //manages current score during game
 let activeScore = 0;
